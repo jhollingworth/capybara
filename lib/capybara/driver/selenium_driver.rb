@@ -92,7 +92,14 @@ class Capybara::Driver::Selenium < Capybara::Driver::Base
 
   def self.driver
     unless @driver
-      @driver = Selenium::WebDriver.for :firefox
+      if ENV['browser'] == nil || ENV['browser'] == 'firefox' || ENV['browser'] == 'ff'
+        profile = Selenium::WebDriver::Firefox::Profile.new
+        profile['network.automatic-ntlm-auth.trusted-uris'] = 'admin5.prod.tt'
+        profile['network.ntlm.send-lm-response'] = true
+        @driver = Selenium::WebDriver.for :firefox, :profile => profile
+      else
+        @driver = Selenium::WebDriver.for ENV['browser'].intern
+      end
       at_exit do
         @driver.quit
       end
