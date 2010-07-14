@@ -179,6 +179,16 @@ module Capybara
       end
     end
 
+  protected
+  
+    def add_field(locator, field)
+      xpath = append("#{field}[@id=#{s(locator)}]")
+	  xpath = xpath.append("#{field}[contains(@id,#{s(locator)})]")
+      xpath = xpath.append("#{field}[@id=//label[contains(.,#{s(locator)})]/@for]")
+      xpath = xpath.append("//label[contains(.,#{s(locator)})]#{field}")
+      xpath.prepend("#{field}[@id=//label[text()=#{s(locator)}]/@for]")
+    end
+  
     # Sanitize a String for putting it into an xpath query
     def s(string)
       XPath.escape(string)
