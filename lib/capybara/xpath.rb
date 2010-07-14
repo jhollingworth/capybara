@@ -149,10 +149,19 @@ module Capybara
 
     def add_field(locator, field, options={})
       postfix = extract_postfix(options)
+
       xpath = append("#{field}[@id=#{s(locator)}]#{postfix}")
+      xpath = xpath.append("#{field}[contains(@id,#{s(locator)})]")
       xpath = xpath.append("#{field}[@name=#{s(locator)}]#{postfix}")
       xpath = xpath.append("#{field}[@id=//label[contains(.,#{s(locator)})]/@for]#{postfix}")
       xpath = xpath.append("//label[contains(.,#{s(locator)})]#{field}#{postfix}")
+      xpath = xpath.append("#{field}[contains(@class,#{s(locator)})]")
+
+      if field =='//select'
+        xpath = xpath.append("//select/option[@value=#{s(locator)}]")
+        xpath = xpath.append("//select/option[contains(.,#{s(locator)})]")
+      end
+
       xpath.prepend("#{field}[@id=//label[text()=#{s(locator)}]/@for]#{postfix}")
     end
 
